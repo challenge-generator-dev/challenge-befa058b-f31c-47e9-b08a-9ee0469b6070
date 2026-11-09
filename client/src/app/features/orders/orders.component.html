@@ -1,0 +1,109 @@
+<div class="orders-container">
+  <header class="orders-header">
+    <h1 class="title">Pedidos en Tiempo Real</h1>
+    <p class="subtitle">Visualiza y gestiona los pedidos de tu tienda</p>
+  </header>
+
+  <section class="create-order-section">
+    <mat-card class="create-order-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>add_shopping_cart</mat-icon>
+          Crear Nuevo Pedido
+        </mat-card-title>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <form (ngSubmit)="createOrder()" class="order-form">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>ID del Producto</mat-label>
+            <input 
+              matInput 
+              [(ngModel)]="newOrder.productId" 
+              name="productId"
+              placeholder="PROD-001"
+              required
+            />
+            <mat-icon matPrefix>inventory_2</mat-icon>
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>ID del Cliente</mat-label>
+            <input 
+              matInput 
+              [(ngModel)]="newOrder.customerId" 
+              name="customerId"
+              placeholder="CUST-001"
+              required
+            />
+            <mat-icon matPrefix>person</mat-icon>
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Cantidad</mat-label>
+            <input 
+              matInput 
+              type="number" 
+              [(ngModel)]="newOrder.quantity" 
+              name="quantity"
+              min="1"
+              required
+            />
+            <mat-icon matPrefix>numbers</mat-icon>
+          </mat-form-field>
+          
+          <div class="form-actions">
+            <button 
+              mat-raised-button 
+              color="primary" 
+              type="submit"
+              [disabled]="isCreatingOrder"
+              class="submit-button"
+            >
+              @if (isCreatingOrder) {
+                <mat-spinner diameter="20"></mat-spinner>
+                <span>Creando...</span>
+              } @else {
+                <mat-icon>add</mat-icon>
+                <span>Crear Pedido</span>
+              }
+            </button>
+          </div>
+        </form>
+        
+        @if (showError) {
+          <div class="error-message" role="alert">
+            <mat-icon>error</mat-icon>
+            <span>{{ errorMessage }}</span>
+          </div>
+        }
+      </mat-card-content>
+    </mat-card>
+  </section>
+
+  <section class="orders-list-section">
+    <div class="section-header">
+      <h2 class="section-title">
+        <mat-icon>receipt_long</mat-icon>
+        Lista de Pedidos
+        <span class="order-count">({{ ordersList.length }})</span>
+      </h2>
+    </div>
+    
+    @if (!hasOrders) {
+      <div class="empty-state">
+        <mat-icon>inbox</mat-icon>
+        <p>No hay pedidos todavía</p>
+        <span>Los pedidos aparecerán aquí en tiempo real</span>
+      </div>
+    } @else {
+      <div class="orders-grid">
+        @for (order of ordersList; track trackByOrderId($index, order)) {
+          <app-order-card [order]="order" class="order-card-wrapper">
+            <app-order-status [status]="order.status"></app-order-status>
+          </app-order-card>
+        }
+      </div>
+    }
+  </section>
+</div>
